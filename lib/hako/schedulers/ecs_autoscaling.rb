@@ -73,6 +73,7 @@ module Hako
               Hako.logger.info("Updating #{alarm_name}'s alarm_actions from #{alarm.alarm_actions} to #{[policy_arn]}")
               params = PUT_METRIC_ALARM_OPTIONS.map { |key| [key, alarm.public_send(key)] }.to_h
               params[:alarm_actions] = [policy_arn]
+              params[:dimensions] = params[:dimensions].map { |d| d.name == 'ServiceName' ? d.tap { |o| o.value = service.service_name } : d }
               cw_client.put_metric_alarm(params)
             end
           end
